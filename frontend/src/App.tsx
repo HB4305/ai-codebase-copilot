@@ -299,7 +299,7 @@ export default function App() {
       {/* ── Landing ── */}
       {phase === 'landing' && (
         <main className={styles.main}>
-          <HeroSection url={url} setUrl={setUrl} onAnalyze={handleAnalyze} loading={false} lang={lang} />
+          <HeroSection url={url} setUrl={setUrl} onAnalyze={handleAnalyze} loading={false} lang={lang} quota={quota} />
           {error && (
             <div className={styles.errorBanner} role="alert">
               <span>⚠️</span>

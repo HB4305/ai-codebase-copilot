@@ -143,6 +143,16 @@
   cursor: not-allowed;
 }
 
+/* ─── Quota Row ─── */
+.quotaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease-out 0.35s both;
+}
+
 /* ─── Hint ─── */
 .hint {
   display: flex;
