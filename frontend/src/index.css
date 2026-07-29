@@ -214,22 +214,26 @@ a:hover { color: var(--brand-to); }
 
 /* Code block container with crisp dark background for contrast */
 .markdown-content pre {
-  background: #0f172a;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #0b0f19 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: var(--radius-md);
   padding: 14px 18px;
   overflow-x: auto;
   margin: 0.8em 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.markdown-content pre code {
-  background: none;
-  color: #f8fafc;
-  border: none;
-  padding: 0;
-  font-size: 13px;
-  font-weight: 400;
+.markdown-content pre code,
+.markdown-content pre code *,
+.markdown-content pre p {
+  background: none !important;
+  color: #f8fafc !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.6 !important;
 }
 
 .markdown-content blockquote {

@@ -6,16 +6,20 @@
 export function markdownToHtml(md: string): string {
   if (!md) return '';
 
+  // Extract fenced code blocks to prevent inner line parsing
+  const codeBlocks: string[] = [];
   let html = md
     // Escape HTML entities
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
 
-    // Fenced code blocks
-    .replace(/```(\w*)\n?([\s\S]*?)```/g, (_: string, lang: string, code: string) =>
-      `<pre><code class="language-${lang}">${code.trim()}</code></pre>`,
-    )
+    // Preserve fenced code blocks
+    .replace(/```(\w*)\n?([\s\S]*?)```/g, (_: string, lang: string, code: string) => {
+      const idx = codeBlocks.length;
+      codeBlocks.push(`<pre><code class="language-${lang}">${code.trim()}</code></pre>`);
+      return `___CODE_BLOCK_${idx}___`;
+    })
 
     // Inline code
     .replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -55,11 +59,18 @@ export function markdownToHtml(md: string): string {
     .map((line) => {
       const t = line.trim();
       if (!t) return '';
+      if (t.startsWith('___CODE_BLOCK_')) return t;
       const blockStart = ['<h', '<ul', '<li', '<pre', '<block', '<hr', '</'];
       if (blockStart.some((s) => t.startsWith(s))) return t;
       return `<p>${t}</p>`;
     })
     .join('\n');
+
+  // Restore fenced code blocks
+  html = html.replace(/___CODE_BLOCK_(\d+)___/g, (_, idxStr) => {
+    const idx = parseInt(idxStr, 10);
+    return codeBlocks[idx] || '';
+  });
 
   return html;
 }
