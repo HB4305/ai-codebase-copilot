@@ -40,6 +40,11 @@ export interface IndexProgress {
   cached?: boolean;
 }
 
+export interface QuotaLimits {
+  analyze: { remaining: number; limit: number };
+  chat: { remaining: number; limit: number };
+}
+
 // ─── App State ────────────────────────────────────────────────────
 
 export type AppPhase = 'landing' | 'indexing' | 'analyzing' | 'done';

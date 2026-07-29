@@ -4,10 +4,14 @@ import {
   chatAboutRepo,
   reindexRepo,
   checkRepoStatus,
+  getQuotaLimits,
 } from "../controllers/repo.controller.js";
 import { validateRepoUrl, validateChatInput } from "../middlewares/validate.middleware.js";
 
 const router = express.Router();
+
+// GET /api/repo/limits — Get remaining quota limits for client IP
+router.get("/repo/limits", getQuotaLimits);
 
 // POST /api/repo/analyze — Stream indexing progress & AI analysis of a GitHub repo
 router.post("/repo/analyze", validateRepoUrl, analyzeRepo);

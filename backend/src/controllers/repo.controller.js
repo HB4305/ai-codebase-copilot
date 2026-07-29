@@ -10,6 +10,17 @@ import {
   reindexRepoStream,
   getRepoStatus,
 } from "../services/repo.service.js";
+import { getRemainingQuota, checkAndRecordHit } from "../utils/rate-limiter.js";
+
+/**
+ * GET /api/repo/limits
+ * Returns remaining rate limits for the client IP
+ */
+export const getQuotaLimits = (req, res) => {
+  const clientIp = req.ip || req.headers["x-forwarded-for"] || "127.0.0.1";
+  const limits = getRemainingQuota(clientIp);
+  res.json(limits);
+};
 
 /**
  * POST /api/repo/analyze
@@ -18,6 +29,10 @@ import {
  */
 export const analyzeRepo = async (req, res, next) => {
   const { url, lang = 'en' } = req.body;
+  const clientIp = req.ip || req.headers["x-forwarded-for"] || "127.0.0.1";
+
+  // Record usage
+  checkAndRecordHit(clientIp, "analyze");
 
   // Set SSE headers for streaming
   res.setHeader("Content-Type", "text/event-stream");
@@ -89,6 +104,10 @@ export const checkRepoStatus = async (req, res, next) => {
  */
 export const chatAboutRepo = async (req, res, next) => {
   const { url, message, history = [], lang = 'en' } = req.body;
+  const clientIp = req.ip || req.headers["x-forwarded-for"] || "127.0.0.1";
+
+  // Record usage
+  checkAndRecordHit(clientIp, "chat");
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");

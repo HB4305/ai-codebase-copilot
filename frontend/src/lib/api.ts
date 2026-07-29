@@ -5,9 +5,22 @@ import type {
   Language,
   IndexProgress,
   SourceCitation,
+  QuotaLimits,
 } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api';
+
+// ─── Quota Limits ──────────────────────────────────────────────────
+
+export async function fetchQuotaLimits(): Promise<QuotaLimits | null> {
+  try {
+    const response = await fetch(`${API_BASE}/repo/limits`);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
 
 // ─── Analyze ──────────────────────────────────────────────────────
 

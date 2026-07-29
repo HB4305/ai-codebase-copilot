@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import type { AppPhase, ChatMessage, RepoMeta, Language, IndexProgress, SourceCitation } from './types';
-import { analyzeRepo, chatAboutRepo, reindexRepo } from './lib/api';
+import type { AppPhase, ChatMessage, RepoMeta, Language, IndexProgress, SourceCitation, QuotaLimits } from './types';
+import { analyzeRepo, chatAboutRepo, reindexRepo, fetchQuotaLimits } from './lib/api';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { RepoMetaCard } from './components/RepoMetaCard';
@@ -84,6 +84,17 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatHistory, setChatHistory] = useState<Pick<ChatMessage, 'role' | 'content'>[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
+  const [quota, setQuota] = useState<QuotaLimits | null>(null);
+
+  const refreshQuota = useCallback(() => {
+    fetchQuotaLimits().then((data) => {
+      if (data) setQuota(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    refreshQuota();
+  }, [phase, refreshQuota]);
 
   const t = LAYOUT_TRANSLATIONS[lang];
 
@@ -283,7 +294,7 @@ export default function App() {
   return (
     <div className={styles.page}>
       <GravityCanvas />
-      <Header lang={lang} onLangChange={handleLangChange} />
+      <Header lang={lang} onLangChange={handleLangChange} quota={quota} />
 
       {/* ── Landing ── */}
       {phase === 'landing' && (
