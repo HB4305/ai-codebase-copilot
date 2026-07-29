@@ -49,9 +49,12 @@ export const streamRepoAnalysis = async (repoContext, res, lang = 'en') => {
     ? "IMPORTANT: You MUST write the entire response in Vietnamese (Tiếng Việt) but keep technical terms, commands, and code blocks as they are."
     : "IMPORTANT: You MUST write the entire response in English.";
 
+  const maxTokens = parseInt(process.env.OPENAI_MAX_TOKENS) || 4096;
+
   const stream = await getClient().chat.completions.create({
     model: getModel(),
     stream: true,
+    max_tokens: maxTokens,
     messages: [
       { role: "system", content: `${ANALYZE_SYSTEM_PROMPT}\n\n${languageInstruction}` },
       {
@@ -99,9 +102,12 @@ ${repoContext}`;
     { role: "user", content: userMessage },
   ];
 
+  const maxTokens = parseInt(process.env.OPENAI_MAX_TOKENS) || 4096;
+
   const stream = await getClient().chat.completions.create({
     model: getModel(),
     stream: true,
+    max_tokens: maxTokens,
     messages,
   });
 
@@ -141,9 +147,12 @@ ${retrievedContext}`;
     { role: "user", content: userMessage },
   ];
 
+  const maxTokens = parseInt(process.env.OPENAI_MAX_TOKENS) || 4096;
+
   const stream = await getClient().chat.completions.create({
     model: getModel(),
     stream: true,
+    max_tokens: maxTokens,
     messages,
   });
 
