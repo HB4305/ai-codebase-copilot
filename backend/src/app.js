@@ -35,7 +35,7 @@ const chatLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Configure CORS to support local development ports and custom environment origins
+// Configure CORS to support local development, custom domain, Vercel deployments, and environment origins
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(",").map(url => url.trim())
   : ["http://localhost:3000", "http://localhost:3001"];
@@ -45,14 +45,20 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, curl, or postman)
     if (!origin) return callback(null, true);
     
-    const isAllowed = allowedOrigins.includes(origin) || 
-                      /^https?:\/\/localhost:\d+$/.test(origin) || 
-                      /^https?:\/\/127\.0\.0\.1:\d+$/.test(origin);
+    const isAllowed = 
+      allowedOrigins.includes("*") ||
+      allowedOrigins.includes(origin) || 
+      origin === "https://hoaichaobai.online" ||
+      origin === "https://www.hoaichaobai.online" ||
+      /^https?:\/\/.*\.hoaichaobai\.online$/.test(origin) ||
+      /^https?:\/\/.*\.vercel\.app$/.test(origin) ||
+      /^https?:\/\/localhost:\d+$/.test(origin) || 
+      /^https?:\/\/127\.0\.0\.1:\d+$/.test(origin);
                       
     if (isAllowed) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(null, false);
     }
   },
   credentials: true,
