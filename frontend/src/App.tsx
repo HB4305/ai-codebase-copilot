@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { AppPhase, ChatMessage, RepoMeta, Language, IndexProgress, SourceCitation } from './types';
 import { analyzeRepo, chatAboutRepo, reindexRepo } from './lib/api';
 import { Header } from './components/Header';
@@ -97,44 +97,71 @@ export default function App() {
 
   // ─── Handlers ─────────────────────────────────────────────────
 
-  const handleAnalyze = useCallback(async () => {
-    const trimmedUrl = url.trim();
-    if (!trimmedUrl) return;
+  const startAnalysis = useCallback(
+    async (targetUrl: string) => {
+      const trimmedUrl = targetUrl.trim();
+      if (!trimmedUrl) return;
 
-    // Reset
-    setError('');
-    setAnalysisText('');
-    setRepoMeta(null);
-    setIndexProgress(null);
-    setStreamingDone(false);
-    setChatMessages([]);
-    setChatHistory([]);
-    analysisRef.current = '';
-    setPhase('indexing');
-
-    await analyzeRepo(trimmedUrl, lang, {
-      onMeta: (meta) => setRepoMeta(meta),
-      onProgress: (progress) => {
-        setIndexProgress(progress);
-        if (progress.phase === 'storing' && progress.current === progress.total) {
-          setPhase('analyzing');
+      // Sync URL param in browser address bar
+      if (typeof window !== 'undefined') {
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('repo') !== trimmedUrl) {
+          searchParams.set('repo', trimmedUrl);
+          window.history.pushState({}, '', `${window.location.pathname}?${searchParams.toString()}`);
         }
-      },
-      onDelta: (delta) => {
-        setPhase('analyzing');
-        analysisRef.current += delta;
-        setAnalysisText(analysisRef.current);
-      },
-      onDone: () => {
-        setStreamingDone(true);
-        setPhase('done');
-      },
-      onError: (msg) => {
-        setError(msg);
-        setPhase('landing');
-      },
-    });
-  }, [url, lang]);
+      }
+
+      // Reset
+      setError('');
+      setAnalysisText('');
+      setRepoMeta(null);
+      setIndexProgress(null);
+      setStreamingDone(false);
+      setChatMessages([]);
+      setChatHistory([]);
+      analysisRef.current = '';
+      setPhase('indexing');
+
+      await analyzeRepo(trimmedUrl, lang, {
+        onMeta: (meta) => setRepoMeta(meta),
+        onProgress: (progress) => {
+          setIndexProgress(progress);
+          if (progress.phase === 'storing' && progress.current === progress.total) {
+            setPhase('analyzing');
+          }
+        },
+        onDelta: (delta) => {
+          setPhase('analyzing');
+          analysisRef.current += delta;
+          setAnalysisText(analysisRef.current);
+        },
+        onDone: () => {
+          setStreamingDone(true);
+          setPhase('done');
+        },
+        onError: (msg) => {
+          setError(msg);
+          setPhase('landing');
+        },
+      });
+    },
+    [lang],
+  );
+
+  const handleAnalyze = useCallback(() => {
+    startAnalysis(url);
+  }, [startAnalysis, url]);
+
+  // Initial load check for ?repo=... parameter in URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const searchParams = new URLSearchParams(window.location.search);
+    const repoParam = searchParams.get('repo');
+    if (repoParam) {
+      setUrl(repoParam);
+      startAnalysis(repoParam);
+    }
+  }, [startAnalysis]);
 
   const handleReindex = useCallback(async () => {
     const trimmedUrl = url.trim();
@@ -237,6 +264,9 @@ export default function App() {
   );
 
   const handleReset = () => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', window.location.pathname);
+    }
     setPhase('landing');
     setUrl('');
     setAnalysisText('');
