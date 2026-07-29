@@ -1,5 +1,5 @@
 import type { FC, KeyboardEvent } from 'react';
-import type { Language, QuotaLimits } from '../types';
+import type { Language } from '../types';
 import { GithubIcon, SpinnerIcon } from './Icons';
 import styles from './HeroSection.module.css';
 
@@ -9,7 +9,6 @@ interface HeroSectionProps {
   onAnalyze: () => void;
   loading: boolean;
   lang: Language;
-  quota?: QuotaLimits | null;
 }
 
 const EXAMPLES = ['facebook/react', 'vercel/next.js', 'expressjs/express'];
@@ -39,7 +38,7 @@ const TRANSLATIONS = {
   },
 };
 
-export const HeroSection: FC<HeroSectionProps> = ({ url, setUrl, onAnalyze, loading, lang, quota }) => {
+export const HeroSection: FC<HeroSectionProps> = ({ url, setUrl, onAnalyze, loading, lang }) => {
   const t = TRANSLATIONS[lang];
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -100,17 +99,6 @@ export const HeroSection: FC<HeroSectionProps> = ({ url, setUrl, onAnalyze, load
             )}
           </button>
         </div>
-
-        {quota && (
-          <div className={styles.quotaRow}>
-            <span className="badge badge-purple" style={{ padding: '6px 14px', fontSize: '13px' }}>
-              ⚡ {lang === 'vi' ? `Hạn mức phân tích: ${quota.analyze.remaining}/${quota.analyze.limit} lượt / 15 phút` : `Analyze quota: ${quota.analyze.remaining}/${quota.analyze.limit} per 15 min`}
-            </span>
-            <span className="badge badge-blue" style={{ padding: '6px 14px', fontSize: '13px' }}>
-              💬 {lang === 'vi' ? `Hạn mức chat AI: ${quota.chat.remaining}/${quota.chat.limit} lượt / 15 phút` : `Chat quota: ${quota.chat.remaining}/${quota.chat.limit} per 15 min`}
-            </span>
-          </div>
-        )}
 
         <p className={styles.hint}>
           {t.try}&nbsp;

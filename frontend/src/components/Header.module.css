@@ -39,13 +39,32 @@
 .rightContainer {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .quotaBadges {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.quotaPill {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--transition-fast);
+}
+
+.quotaPill:hover {
+  border-color: var(--brand-from);
+  color: var(--text-primary);
 }
 
 .langSelector {
@@ -78,10 +97,6 @@
   color: #ffffff;
   background: var(--brand-gradient);
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-}
-
-@media (max-width: 768px) {
-  .quotaBadges { display: none; }
 }
 
 @media (max-width: 640px) {

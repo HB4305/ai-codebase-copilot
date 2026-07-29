@@ -18,11 +18,17 @@ export const Header: FC<HeaderProps> = ({ lang, onLangChange, quota }) => (
     <div className={styles.rightContainer}>
       {quota && (
         <div className={styles.quotaBadges}>
-          <span className="badge badge-purple" title="Số lượt phân tích Repo còn lại trong 15 phút">
-            ⚡ {quota.analyze.remaining}/{quota.analyze.limit} {lang === 'vi' ? 'Lượt phân tích' : 'Analyzes'}
+          <span
+            className={styles.quotaPill}
+            title={lang === 'vi' ? 'Số lượt phân tích còn lại trong 15 phút' : 'Remaining analyzes in 15 min'}
+          >
+            ⚡ {quota.analyze.remaining}/{quota.analyze.limit}
           </span>
-          <span className="badge badge-blue" title="Số lượt chat RAG còn lại trong 15 phút">
-            💬 {quota.chat.remaining}/{quota.chat.limit} {lang === 'vi' ? 'Lượt chat' : 'Chats'}
+          <span
+            className={styles.quotaPill}
+            title={lang === 'vi' ? 'Số lượt chat AI còn lại trong 15 phút' : 'Remaining chats in 15 min'}
+          >
+            💬 {quota.chat.remaining}/{quota.chat.limit}
           </span>
         </div>
       )}
