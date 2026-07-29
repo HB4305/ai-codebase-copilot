@@ -1,8 +1,9 @@
 .hero {
   position: relative;
-  padding: 80px 24px 60px;
+  padding: 60px 16px 40px;
   text-align: center;
   overflow: hidden;
+  width: 100%;
 }
 
 .bg {
@@ -45,7 +46,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .badge {
@@ -54,19 +57,20 @@
 }
 
 .title {
-  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-size: clamp(2rem, 5.5vw, 3.6rem);
   font-weight: 800;
-  letter-spacing: -2px;
-  line-height: 1.1;
+  letter-spacing: -1px;
+  line-height: 1.15;
   color: var(--text-primary);
   animation: fadeInUp 0.5s ease-out 0.1s both;
+  word-break: break-word;
 }
 
 .subtitle {
-  font-size: 17px;
+  font-size: clamp(14px, 2vw, 16.5px);
   color: var(--text-secondary);
-  max-width: 540px;
-  line-height: 1.7;
+  max-width: 620px;
+  line-height: 1.65;
   animation: fadeInUp 0.5s ease-out 0.2s both;
 }
 
@@ -75,19 +79,20 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 700px;
-  background: var(--bg-elevated);
+  max-width: 720px;
+  background: var(--bg-surface);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   padding: 6px 6px 6px 16px;
   gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   transition: border-color 250ms, box-shadow 250ms;
   animation: fadeInUp 0.5s ease-out 0.3s both;
 }
 
 .inputGroup:focus-within {
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 0 3px rgba(124,109,250,0.15), var(--brand-glow);
+  border-color: var(--brand-from);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12), var(--brand-glow);
 }
 
 .inputIcon {
@@ -104,7 +109,7 @@
   outline: none;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14.5px;
   min-width: 0;
 }
 
@@ -114,7 +119,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 26px;
+  padding: 12px 24px;
   background: var(--brand-gradient);
   color: #fff;
   border: none;
@@ -124,12 +129,12 @@
   font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+  box-shadow: var(--brand-glow);
   transition: box-shadow 250ms, transform 150ms;
 }
 
 .analyzeBtn:hover:not(:disabled) {
-  box-shadow: 0 6px 28px rgba(108,99,255,0.6);
+  box-shadow: 0 6px 24px rgba(79, 70, 229, 0.35);
   transform: translateY(-1px);
 }
 
@@ -151,26 +156,28 @@
 }
 
 .exampleChip {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-full);
-  color: var(--accent-purple);
+  color: var(--brand-from);
   font-size: 12px;
   font-family: var(--font-mono);
-  padding: 3px 12px;
+  font-weight: 500;
+  padding: 4px 12px;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .exampleChip:hover:not(:disabled) {
-  border-color: var(--accent-purple);
-  background: rgba(124,109,250,0.08);
+  border-color: var(--brand-from);
+  background: rgba(79, 70, 229, 0.06);
 }
 
 .exampleChip:disabled { opacity: 0.5; cursor: not-allowed; }
 
 @media (max-width: 640px) {
-  .hero { padding: 48px 20px 32px; }
+  .hero { padding: 40px 12px 24px; }
   .inputGroup { flex-direction: column; padding: 12px; }
+  .input { width: 100%; text-align: center; }
   .analyzeBtn { width: 100%; justify-content: center; }
 }
