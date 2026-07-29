@@ -55,12 +55,12 @@ const LAYOUT_TRANSLATIONS = {
   en: {
     back: '← Back',
     analyzing: 'Indexing & analyzing repository…',
-    footer: 'WEB OF HB4305',
+    footer: 'hoaichaobai@gmail.com',
   },
   vi: {
     back: '← Quay lại',
     analyzing: 'Đang index & phân tích mã nguồn…',
-    footer: 'WEB CỦA HB4305',
+    footer: 'hoaichaobai@gmail.com',
   },
 };
 
