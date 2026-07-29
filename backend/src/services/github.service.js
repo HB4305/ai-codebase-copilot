@@ -171,29 +171,31 @@ export const buildRepoContext = async (url) => {
   // 2. Fetch file tree
   const allFiles = await getRepoTree(owner, repo, branch);
 
-  // 3. Fetch key file contents
+  // 3. Fetch key file contents (prioritize top-level key files, cap at 8 key files max)
   const fileContents = {};
-  const foundKeyFiles = allFiles.filter((f) =>
-    KEY_FILES.some((k) => f === k || f.endsWith("/" + k))
-  );
+  const foundKeyFiles = allFiles
+    .filter((f) => KEY_FILES.some((k) => f === k || f.endsWith("/" + k)))
+    .sort((a, b) => a.split("/").length - b.split("/").length)
+    .slice(0, 8);
 
   await Promise.allSettled(
     foundKeyFiles.map(async (filePath) => {
       const content = await getFileContent(owner, repo, filePath);
       if (content) {
-        fileContents[filePath] = content;
+        // Cap each key file content to 3000 chars max
+        fileContents[filePath] = content.length > 3000 ? content.slice(0, 3000) + "\n...(truncated)" : content;
       }
     })
   );
 
-  // 4. Build structured context string
-  const fileTree = allFiles.slice(0, 300).join("\n"); // Cap at 300 files
+  // 4. Build structured context string (Cap file tree at 150 files)
+  const fileTree = allFiles.slice(0, 150).join("\n");
 
   const keyFilesSection = Object.entries(fileContents)
     .map(([path, content]) => `### ${path}\n\`\`\`\n${content}\n\`\`\``)
     .join("\n\n");
 
-  const context = `
+  let context = `
 # Repository: ${repoInfo.fullName}
 
 ## Metadata
@@ -206,7 +208,7 @@ export const buildRepoContext = async (url) => {
 - Default Branch: ${branch}
 - Open Issues: ${repoInfo.openIssues}
 
-## File Structure (first 300 files)
+## File Structure (first 150 files)
 \`\`\`
 ${fileTree}
 \`\`\`
@@ -214,6 +216,13 @@ ${fileTree}
 ## Key File Contents
 ${keyFilesSection || "No key configuration files found."}
 `.trim();
+
+  // Enforce strict 60,000 character limit (~15,000 tokens) to fit OpenRouter prompt limits
+  if (context.length > 60000) {
+    context = context.slice(0, 60000) + "\n\n... (Context truncated to fit token limits)";
+  }
+
+  return { context, repoInfo, owner, repo, branch };
 
   return { context, repoInfo, owner, repo, branch };
 };
